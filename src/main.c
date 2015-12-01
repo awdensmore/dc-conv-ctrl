@@ -43,6 +43,7 @@ TIM_HandleTypeDef htim1;
 TIM_HandleTypeDef htim3;
 TIM_HandleTypeDef htim15;
 TIM_HandleTypeDef htim16;
+TIM_OC_InitTypeDef sConfigOC;
 TIM_BreakDeadTimeConfigTypeDef sBreakConfig;
 
 UART_HandleTypeDef huart1;
@@ -74,7 +75,7 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
-
+  uint32_t ticks = 0;
   /* USER CODE END 1 */
 
   /* MCU Configuration----------------------------------------------------------*/
@@ -106,7 +107,7 @@ int main(void)
   /* USER CODE E	.................ND WHILE */
 	  for(uint8_t i=0;i<100;i++)
 	  {
-		  TIM3_PWM_Adjust(&htim3, i, TIM_CHANNEL_1);
+		  TIM_PWM_Adjust(&htim3, &sConfigOC, i, TIM_CHANNEL_1);
 		  HAL_Delay(10);
 	  }
 
@@ -202,7 +203,7 @@ void MX_TIM3_Init(void)
 {
 
   TIM_MasterConfigTypeDef sMasterConfig;
-  TIM_OC_InitTypeDef sConfigOC;
+  //TIM_OC_InitTypeDef sConfigOC;
 
   htim3.Instance = TIM3;
   htim3.Init.Prescaler = 0;
@@ -219,6 +220,7 @@ void MX_TIM3_Init(void)
   sConfigOC.Pulse = (PRD_PWM * DC_PWM) / 100;
   sConfigOC.OCPolarity = TIM_OCPOLARITY_LOW;
   sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
+
   HAL_TIM_PWM_ConfigChannel(&htim3, &sConfigOC, TIM_CHANNEL_1);
 
   //HAL_TIM_PWM_ConfigChannel(&htim3, &sConfigOC, TIM_CHANNEL_2);
