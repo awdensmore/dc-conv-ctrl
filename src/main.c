@@ -42,6 +42,7 @@ TIM_HandleTypeDef htim1;
 TIM_HandleTypeDef htim3;
 TIM_HandleTypeDef htim15;
 TIM_HandleTypeDef htim16;
+TIM_BreakDeadTimeConfigTypeDef sBreakConfig;
 
 UART_HandleTypeDef huart1;
 
@@ -49,9 +50,9 @@ UART_HandleTypeDef huart1;
 /* Private typedef ---------------------------------------------------------*/
 #define  FREQ_CLK   (uint32_t)(8000000)
 #define  FREQ_EIS   (uint32_t)(1000)
-#define  FREQ_PWM   (uint32_t)(10000)
+#define  FREQ_PWM   (uint32_t)(40000)
 #define  PRD_PWM    (uint32_t)(6 * (FREQ_CLK / FREQ_PWM) - 1)
-#define  DC_PWM     (uint32_t)(40)
+#define  DC_PWM     (uint32_t)(30)
 
 /* USER CODE END PV */
 
@@ -103,6 +104,7 @@ int main(void)
 
   /* USER CODE BEGIN 2 */
   HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
+  HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_2);
   //TIM3_PWM_Adjust(100, TIM_CHANNEL_1);
   /* USER CODE END 2 */
 
@@ -224,11 +226,23 @@ void MX_TIM3_Init(void)
   sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
   HAL_TIM_PWM_ConfigChannel(&htim3, &sConfigOC, TIM_CHANNEL_1);
 
+  sBreakConfig.BreakState       = TIM_BREAK_ENABLE;
+  sBreakConfig.DeadTime         = 100;
+  sBreakConfig.OffStateRunMode  = TIM_OSSR_ENABLE;
+  sBreakConfig.OffStateIDLEMode = TIM_OSSI_ENABLE;
+  sBreakConfig.LockLevel        = TIM_LOCKLEVEL_1;
+  sBreakConfig.BreakPolarity    = TIM_BREAKPOLARITY_HIGH;
+  sBreakConfig.AutomaticOutput  = TIM_AUTOMATICOUTPUT_ENABLE;
+  HAL_TIMEx_ConfigBreakDeadTime(&htim3, &sBreakConfig);
+
+  //htim3.Init.CounterMode = TIM_COUNTERMODE_DOWN;
+  //sConfigOC.OCPolarity = TIM_OCPOLARITY_LOW;
+  //sConfigOC.Pulse = 30;//(PRD_PWM * DC_PWM/100) / 100;
   HAL_TIM_PWM_ConfigChannel(&htim3, &sConfigOC, TIM_CHANNEL_2);
 
-  HAL_TIM_PWM_ConfigChannel(&htim3, &sConfigOC, TIM_CHANNEL_3);
+  //HAL_TIM_PWM_ConfigChannel(&htim3, &sConfigOC, TIM_CHANNEL_3);
 
-  HAL_TIM_PWM_ConfigChannel(&htim3, &sConfigOC, TIM_CHANNEL_4);
+  //HAL_TIM_PWM_ConfigChannel(&htim3, &sConfigOC, TIM_CHANNEL_4);
 
 }
 
@@ -260,7 +274,8 @@ void MX_TIM15_Init(void)
   htim15.Init.Period = 0;
   htim15.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim15.Init.RepetitionCounter = 0;
-  HAL_TIM_PWM_Init(&htim15);
+  HAL_TIM_OnePulse_Init(&htim15,TIM_OPMODE_REPETITIVE);
+  //HAL_TIM_PWM_Init(&htim15);
 
   sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
   sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
@@ -276,7 +291,7 @@ void MX_TIM15_Init(void)
   HAL_TIMEx_ConfigBreakDeadTime(&htim15, &sBreakDeadTimeConfig);
 
   sConfigOC.OCMode = TIM_OCMODE_PWM1;
-  sConfigOC.Pulse = 0;
+  sConfigOC.Pulse = 100;
   sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
   sConfigOC.OCNPolarity = TIM_OCNPOLARITY_HIGH;
   sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
