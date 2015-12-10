@@ -32,6 +32,7 @@
   */
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f0xx_hal.h"
+#include "user_funcs.h"
 
 /* USER CODE BEGIN Includes */
 
@@ -48,11 +49,6 @@ UART_HandleTypeDef huart1;
 
 /* USER CODE BEGIN TD */
 /* Private typedef ---------------------------------------------------------*/
-#define  FREQ_CLK   (uint32_t)(8000000)
-#define  FREQ_EIS   (uint32_t)(1000)
-#define  FREQ_PWM   (uint32_t)(20000)
-#define  PRD_PWM    (uint32_t)(6 * (FREQ_CLK / FREQ_PWM) - 1)
-#define  DC_PWM     (uint32_t)(35)
 
 /* USER CODE END PV */
 
@@ -61,7 +57,6 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_TIM1_Init(void);
 static void MX_TIM3_Init(void);
-void TIM3_PWM_Adjust(uint32_t pulse_prd, uint32_t channel);
 static void MX_TIM15_Init(void);
 static void MX_TIM16_Init(void);
 static void MX_USART1_UART_Init(void);
@@ -111,7 +106,7 @@ int main(void)
   /* USER CODE E	.................ND WHILE */
 	  for(uint8_t i=0;i<100;i++)
 	  {
-		  TIM3_PWM_Adjust(i, TIM_CHANNEL_1);
+		  TIM3_PWM_Adjust(&htim3, i, TIM_CHANNEL_1);
 		  HAL_Delay(10);
 	  }
 
@@ -234,20 +229,6 @@ void MX_TIM3_Init(void)
 
   HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
   HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_2);
-
-}
-
-void TIM3_PWM_Adjust(uint32_t duty_cycle, uint32_t channel)
-{
-	TIM_OC_InitTypeDef sConfigOC;
-	sConfigOC.OCMode = TIM_OCMODE_PWM1;
-	sConfigOC.OCPolarity = TIM_OCPOLARITY_LOW;
-	sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
-	sConfigOC.Pulse = (PRD_PWM * duty_cycle) / 100;
-
-	HAL_TIM_PWM_Stop(&htim3, channel);
-	HAL_TIM_PWM_ConfigChannel(&htim3, &sConfigOC, channel);
-	HAL_TIM_PWM_Start(&htim3, channel);
 
 }
 
