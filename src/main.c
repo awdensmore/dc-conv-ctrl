@@ -50,9 +50,9 @@ UART_HandleTypeDef huart1;
 /* Private typedef ---------------------------------------------------------*/
 #define  FREQ_CLK   (uint32_t)(8000000)
 #define  FREQ_EIS   (uint32_t)(1000)
-#define  FREQ_PWM   (uint32_t)(40000)
+#define  FREQ_PWM   (uint32_t)(20000)
 #define  PRD_PWM    (uint32_t)(6 * (FREQ_CLK / FREQ_PWM) - 1)
-#define  DC_PWM     (uint32_t)(30)
+#define  DC_PWM     (uint32_t)(75)
 
 /* USER CODE END PV */
 
@@ -238,7 +238,7 @@ void MX_TIM3_Init(void)
   //htim3.Init.CounterMode = TIM_COUNTERMODE_DOWN;
   //sConfigOC.OCPolarity = TIM_OCPOLARITY_LOW;
   //sConfigOC.Pulse = 30;//(PRD_PWM * DC_PWM/100) / 100;
-  HAL_TIM_PWM_ConfigChannel(&htim3, &sConfigOC, TIM_CHANNEL_2);
+  //HAL_TIM_PWM_ConfigChannel(&htim3, &sConfigOC, TIM_CHANNEL_2);
 
   //HAL_TIM_PWM_ConfigChannel(&htim3, &sConfigOC, TIM_CHANNEL_3);
 
