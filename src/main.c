@@ -52,7 +52,7 @@ UART_HandleTypeDef huart1;
 #define  FREQ_EIS   (uint32_t)(1000)
 #define  FREQ_PWM   (uint32_t)(20000)
 #define  PRD_PWM    (uint32_t)(6 * (FREQ_CLK / FREQ_PWM) - 1)
-#define  DC_PWM     (uint32_t)(75)
+#define  DC_PWM     (uint32_t)(35)
 
 /* USER CODE END PV */
 
@@ -79,11 +79,7 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
-/*  htim3.Instance = TIM3;
-  htim3.Init.Prescaler = 0;
-  htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim3.Init.Period = PRD_PWM;
-  htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+
   /* USER CODE END 1 */
 
   /* MCU Configuration----------------------------------------------------------*/
@@ -104,7 +100,7 @@ int main(void)
 
   /* USER CODE BEGIN 2 */
   HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
-  HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_2);
+  //HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_2);
   //TIM3_PWM_Adjust(100, TIM_CHANNEL_1);
   /* USER CODE END 2 */
 
@@ -113,7 +109,11 @@ int main(void)
   while (1)
   {
   /* USER CODE E	.................ND WHILE */
-  //HAL_GPIO_TogglePin(GPIOA,GPIO_PIN_5);
+	  for(uint8_t i=0;i<100;i++)
+	  {
+		  TIM3_PWM_Adjust(i, TIM_CHANNEL_1);
+		  HAL_Delay(10);
+	  }
 
   /* USER CODE BEGIN 3 */
 
@@ -222,37 +222,28 @@ void MX_TIM3_Init(void)
 
   sConfigOC.OCMode = TIM_OCMODE_PWM1;
   sConfigOC.Pulse = (PRD_PWM * DC_PWM) / 100;
-  sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
+  sConfigOC.OCPolarity = TIM_OCPOLARITY_LOW;
   sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
   HAL_TIM_PWM_ConfigChannel(&htim3, &sConfigOC, TIM_CHANNEL_1);
 
-  sBreakConfig.BreakState       = TIM_BREAK_ENABLE;
-  sBreakConfig.DeadTime         = 100;
-  sBreakConfig.OffStateRunMode  = TIM_OSSR_ENABLE;
-  sBreakConfig.OffStateIDLEMode = TIM_OSSI_ENABLE;
-  sBreakConfig.LockLevel        = TIM_LOCKLEVEL_1;
-  sBreakConfig.BreakPolarity    = TIM_BREAKPOLARITY_HIGH;
-  sBreakConfig.AutomaticOutput  = TIM_AUTOMATICOUTPUT_ENABLE;
-  HAL_TIMEx_ConfigBreakDeadTime(&htim3, &sBreakConfig);
-
-  //htim3.Init.CounterMode = TIM_COUNTERMODE_DOWN;
-  //sConfigOC.OCPolarity = TIM_OCPOLARITY_LOW;
-  //sConfigOC.Pulse = 30;//(PRD_PWM * DC_PWM/100) / 100;
   //HAL_TIM_PWM_ConfigChannel(&htim3, &sConfigOC, TIM_CHANNEL_2);
 
   //HAL_TIM_PWM_ConfigChannel(&htim3, &sConfigOC, TIM_CHANNEL_3);
 
   //HAL_TIM_PWM_ConfigChannel(&htim3, &sConfigOC, TIM_CHANNEL_4);
 
+  HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
+  HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_2);
+
 }
 
-void TIM3_PWM_Adjust(uint32_t pulse_prd, uint32_t channel)
+void TIM3_PWM_Adjust(uint32_t duty_cycle, uint32_t channel)
 {
 	TIM_OC_InitTypeDef sConfigOC;
 	sConfigOC.OCMode = TIM_OCMODE_PWM1;
-	sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
+	sConfigOC.OCPolarity = TIM_OCPOLARITY_LOW;
 	sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
-	sConfigOC.Pulse = pulse_prd;
+	sConfigOC.Pulse = (PRD_PWM * duty_cycle) / 100;
 
 	HAL_TIM_PWM_Stop(&htim3, channel);
 	HAL_TIM_PWM_ConfigChannel(&htim3, &sConfigOC, channel);
