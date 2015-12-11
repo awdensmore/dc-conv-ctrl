@@ -4,10 +4,11 @@
 #define  FREQ_EIS   (uint32_t)(1000)
 #define  FREQ_PWM   (uint32_t)(20000)
 #define  PRD_PWM    (uint32_t)(6 * (FREQ_CLK / FREQ_PWM) - 1)
-#define  DC_PWM     (uint32_t)(35)
+#define  DC_PWM     (uint32_t)(70)
 
 /* Private function prototypes -----------------------------------------------*/
 void TIM_PWM_Adjust(TIM_HandleTypeDef *htim, TIM_OC_InitTypeDef *configOC, uint32_t pulse_prd, uint32_t channel);
+uint32_t micros(void);
 
 static const uint16_t sine_lookup[30] =
 {

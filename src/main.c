@@ -47,6 +47,7 @@ TIM_OC_InitTypeDef sConfigOC;
 TIM_BreakDeadTimeConfigTypeDef sBreakConfig;
 
 UART_HandleTypeDef huart1;
+UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN TD */
 /* Private typedef ---------------------------------------------------------*/
@@ -61,7 +62,7 @@ static void MX_TIM3_Init(void);
 static void MX_TIM15_Init(void);
 static void MX_TIM16_Init(void);
 static void MX_USART1_UART_Init(void);
-
+static void MX_USART2_UART_Init(void);
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
 
@@ -93,22 +94,33 @@ int main(void)
   MX_TIM15_Init();
   MX_TIM16_Init();
   MX_USART1_UART_Init();
+  MX_USART2_UART_Init();
 
   /* USER CODE BEGIN 2 */
-  HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
+  //HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
   //HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_2);
   //TIM3_PWM_Adjust(100, TIM_CHANNEL_1);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+
   while (1)
   {
-  /* USER CODE E	.................ND WHILE */
-	  for(uint8_t i=0;i<100;i++)
+	  for(uint8_t i=0;i<=10;i++)
 	  {
-		  TIM_PWM_Adjust(&htim3, &sConfigOC, i, TIM_CHANNEL_1);
-		  HAL_Delay(10);
+		  ticks = micros();
+		  HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
+		  //TIM_PWM_Adjust(&htim3, &sConfigOC, i*10, TIM_CHANNEL_1);
+		  while(micros()-ticks < 1000)
+		  	  {
+		  	  }
+		  ticks = micros();
+		  HAL_TIM_PWM_Stop(&htim3, TIM_CHANNEL_1);
+		  while(micros()-ticks < 1000)
+		  	 {
+		  	 }
+
 	  }
 
   /* USER CODE BEGIN 3 */
@@ -149,6 +161,8 @@ void SystemClock_Config(void)
   HAL_SYSTICK_Config(HAL_RCC_GetHCLKFreq()/1000);
 
   HAL_SYSTICK_CLKSourceConfig(SYSTICK_CLKSOURCE_HCLK);
+
+  HAL_NVIC_SetPriority(SysTick_IRQn, 0, 0);
 
 }
 
@@ -218,7 +232,7 @@ void MX_TIM3_Init(void)
 
   sConfigOC.OCMode = TIM_OCMODE_PWM1;
   sConfigOC.Pulse = (PRD_PWM * DC_PWM) / 100;
-  sConfigOC.OCPolarity = TIM_OCPOLARITY_LOW;
+  sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
   sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
 
   HAL_TIM_PWM_ConfigChannel(&htim3, &sConfigOC, TIM_CHANNEL_1);
@@ -332,6 +346,27 @@ void MX_USART1_UART_Init(void)
 
 }
 
+/* USART2 init function */
+void MX_USART2_UART_Init(void)
+{
+  char *msg = "Hello Nucleo Fun!\n\r";
+
+  huart2.Instance = USART2;
+  huart2.Init.BaudRate = 115200;
+  huart2.Init.WordLength = UART_WORDLENGTH_8B;
+  huart2.Init.StopBits = UART_STOPBITS_1;
+  huart2.Init.Parity = UART_PARITY_NONE;
+  huart2.Init.Mode = UART_MODE_TX_RX;
+  huart2.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+  huart2.Init.OverSampling = UART_OVERSAMPLING_16;
+  huart2.Init.OneBitSampling = UART_ONEBIT_SAMPLING_DISABLED ;
+  huart2.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
+  HAL_UART_Init(&huart2);
+
+  HAL_UART_Transmit(&huart2, (uint8_t*)msg, strlen(msg), 0xFFFF);
+
+}
+
 /** Configure pins as 
         * Analog 
         * Input 
@@ -361,7 +396,7 @@ void MX_GPIO_Init(void)
   /*Configure GPIO pins : PA2 PA3 */
   GPIO_InitStruct.Pin = GPIO_PIN_2|GPIO_PIN_3;
   GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
   GPIO_InitStruct.Speed = GPIO_SPEED_LOW;
   GPIO_InitStruct.Alternate = GPIO_AF1_USART2;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
