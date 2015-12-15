@@ -24,21 +24,22 @@
 
 <p>This is a general list of notes of important tips I've learned along the way.</p>
 
-<ul>
-<li>
-<strong>PWM using DMA</strong> - This is useful to rapidly change the PWM duty cycle without accessing the CPU. Some important tips when using CubeMX to generate the setup code:
-'''
-C
-hdma_tim1_ch1.Instance = DMA1_Channel2;
-hdma_tim1_ch1.Init.Direction = DMA_MEMORY_TO_PERIPH;
-hdma_tim1_ch1.Init.PeriphInc = DMA_PINC_DISABLE;
-hdma_tim1_ch1.Init.MemInc = DMA_MINC_ENABLE;
-hdma_tim1_ch1.Init.PeriphDataAlignment = DMA_PDATAALIGN_WORD;
-hdma_tim1_ch1.Init.MemDataAlignment = DMA_MDATAALIGN_WORD;
-hdma_tim1_ch1.Init.Mode = DMA_CIRCULAR;
-hdma_tim1_ch1.Init.Priority = DMA_PRIORITY_HIGH;
-HAL_DMA_Init(&amp;hdma_tim1_ch1);</li>
-</ul>
+<p><strong>PWM using DMA</strong> - This is useful to rapidly change the PWM duty cycle without accessing the CPU. Some important tips when using CubeMX to generate the setup code:</p>
+
+<div class="highlight highlight-source-c"><pre>    hdma_tim1_ch1.Instance = DMA1_Channel2;
+    hdma_tim1_ch1.Init.Direction = DMA_MEMORY_TO_PERIPH;
+    hdma_tim1_ch1.Init.PeriphInc = DMA_PINC_DISABLE;
+    hdma_tim1_ch1.Init.MemInc = DMA_MINC_ENABLE;
+    hdma_tim1_ch1.Init.PeriphDataAlignment = DMA_PDATAALIGN_WORD;
+    hdma_tim1_ch1.Init.MemDataAlignment = DMA_MDATAALIGN_WORD;
+    hdma_tim1_ch1.Init.Mode = DMA_CIRCULAR;
+    hdma_tim1_ch1.Init.Priority = DMA_PRIORITY_HIGH;
+    <span class="pl-en">HAL_DMA_Init</span>(&amp;hdma_tim1_ch1);</pre></div>
+
+<p>I couldn't get this to work until I set MemInc to enable and alignment to word (defaulted to byte). To start the PWM use:</p>
+
+<div class="highlight highlight-source-c"><pre>    <span class="pl-c1">uint32_t</span> duty_cycle[i] = {x, y, ..., i};  <span class="pl-c">// Value from 0-2^16. Must be less than period</span>
+    <span class="pl-en">HAL_TIM_PWM_Start_DMA</span>(&amp;htim1, TIM_CHANNEL_1, duty_cycle, i);</pre></div>
 
       <footer class="site-footer">
         <span class="site-footer-owner"><a href="https://github.com/awdensmore/dc-conv-ctrl">Dc-conv-ctrl</a> is maintained by <a href="https://github.com/awdensmore">awdensmore</a>.</span>
