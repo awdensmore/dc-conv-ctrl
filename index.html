@@ -28,9 +28,11 @@
 <a id="features" class="anchor" href="#features" aria-hidden="true"><span class="octicon octicon-link"></span></a>Features</h3>
 
 <ul>
+<li>Implemented using an STM32F0 ARM MCU</li>
 <li>Independently control the charging and discharging of up to 5 VRLA batteries</li>
 <li>Inject a small ripple voltage during charging or discharging (Electrochemical Impedance Spectroscopy, used to determine the impedance)</li>
 <li>Reverse polarity protection on the power terminals (not on the batteries)</li>
+<li>Control features implemented on the STM32, efficiency measurements with ATMEGA2560 (using Arduino libraries).</li>
 </ul>
 
 <h3>
@@ -39,8 +41,60 @@
 <p>A smaller-grain look at what's needed to build the high-level features:</p>
 
 <ul>
-<li>
+<li>Modulate PWM signal to generate ripple voltage</li>
+<li>CC/CV charging control</li>
+<li>Programmable electronic load:
+
+<ul>
+<li>PWM controlled FET with heat sink</li>
 </ul>
+</li>
+<li>Current measurement:
+
+<ul>
+<li>Charging / discharging: measured at the specialized sensor to get I @ battery side of DC converter</li>
+<li>Power / load side: measured at the opposite side of converter to get efficiency</li>
+</ul>
+</li>
+<li>Voltage measurement: taken at the specialized sensor to get V @ battery side of DC converter</li>
+</ul>
+
+<h3>
+<a id="pin-requirements" class="anchor" href="#pin-requirements" aria-hidden="true"><span class="octicon octicon-link"></span></a>Pin Requirements</h3>
+
+<p><strong>STM32 (Control)</strong></p>
+
+<table>
+<thead>
+<tr>
+<th>Function</th>
+<th>Pin Type</th>
+<th>Quantity</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Ibat</td>
+<td>ADC</td>
+<td>5</td>
+</tr>
+<tr>
+<td>Vbat</td>
+<td>ADC</td>
+<td>5</td>
+</tr>
+<tr>
+<td>PWM (charging)</td>
+<td>PWM</td>
+<td>10</td>
+</tr>
+<tr>
+<td>PWM (discharging)</td>
+<td>PWM</td>
+<td>5</td>
+</tr>
+</tbody>
+</table>
 
 <h3>
 <a id="project-notes" class="anchor" href="#project-notes" aria-hidden="true"><span class="octicon octicon-link"></span></a>Project Notes</h3>
