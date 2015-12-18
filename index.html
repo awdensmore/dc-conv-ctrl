@@ -24,6 +24,8 @@
 
 <p>The aim of the project is to characterize the behavior of VRLA batteries so that online estimates of state of charge (SoC) and state of health (SoH) can be made using simple measurements: voltage, current, temperature and impedance. To do so, this repo is a hardware/software project to implement an aging process during which the data is collected. After collection, it is processed using a machine learning technique to build a data-driven model of the battery behavior.</p>
 
+<p>This project is the work of the Power Electronics Research Group at the <a href="http://ee.uct.ac.za">University of Cape Town</a></p>
+
 <h3>
 <a id="features" class="anchor" href="#features" aria-hidden="true"><span class="octicon octicon-link"></span></a>Features</h3>
 
@@ -41,12 +43,25 @@
 <p>A smaller-grain look at what's needed to build the high-level features:</p>
 
 <ul>
-<li>Modulate PWM signal to generate ripple voltage</li>
-<li>CC/CV charging control</li>
+<li>Modulate PWM signal to generate ripple voltage
+
+<ul>
+<li>DC converter is bidirectional with 2 FETs. During charging top fet controls buck converter, bottom fet is off. During discharge, bottom fet controls output, top fet is off.</li>
+</ul>
+</li>
+<li>CC/CV charging control
+
+<ul>
+<li>Constant current until ~14V (what is full charge)?</li>
+<li>Constant voltage until current reaches 0.01C</li>
+<li>Rest (1hr?)</li>
+</ul>
+</li>
 <li>Programmable electronic load:
 
 <ul>
 <li>PWM controlled FET with heat sink</li>
+<li>CC discharge until 10.5V</li>
 </ul>
 </li>
 <li>Current measurement:
@@ -62,7 +77,7 @@
 <h3>
 <a id="pin-requirements" class="anchor" href="#pin-requirements" aria-hidden="true"><span class="octicon octicon-link"></span></a>Pin Requirements</h3>
 
-<p><strong>STM32 (Control)</strong></p>
+<p><strong>STM32 (Converter Control)</strong></p>
 
 <table>
 <thead>
@@ -93,8 +108,43 @@
 <td>PWM</td>
 <td>5</td>
 </tr>
+<tr>
+<td>Discharge light</td>
+<td>GPIO</td>
+<td>5</td>
+</tr>
 </tbody>
 </table>
+
+<p><strong>ATMEGA2560 (DC/DC Eff. Data)</strong></p>
+
+<table>
+<thead>
+<tr>
+<th>Function</th>
+<th>Pin Type</th>
+<th>Quantity</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Ic</td>
+<td>ADC</td>
+<td>5</td>
+</tr>
+<tr>
+<td>Vc</td>
+<td>ADC</td>
+<td>5</td>
+</tr>
+</tbody>
+</table>
+
+<p><strong>TIF2833</strong> (Data collection)
+| Ibat | ADC     | 5       |
+| Vbat | ADC     | 5       |
+| Veis | ADC     | 5       |
+| Tbat | ADC | 5 |</p>
 
 <h3>
 <a id="project-notes" class="anchor" href="#project-notes" aria-hidden="true"><span class="octicon octicon-link"></span></a>Project Notes</h3>
