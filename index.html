@@ -20,6 +20,29 @@
 
     <section class="main-content">
       <h3>
+<a id="purpose" class="anchor" href="#purpose" aria-hidden="true"><span class="octicon octicon-link"></span></a>Purpose</h3>
+
+<p>The aim of the project is to characterize the behavior of VRLA batteries so that online estimates of state of charge (SoC) and state of health (SoH) can be made using simple measurements: voltage, current, temperature and impedance. To do so, this repo is a hardware/software project to implement an aging process during which the data is collected. After collection, it is processed using a machine learning technique to build a data-driven model of the battery behavior.</p>
+
+<h3>
+<a id="features" class="anchor" href="#features" aria-hidden="true"><span class="octicon octicon-link"></span></a>Features</h3>
+
+<ul>
+<li>Independently control the charging and discharging of up to 5 VRLA batteries</li>
+<li>Inject a small ripple voltage during charging or discharging (Electrochemical Impedance Spectroscopy, used to determine the impedance)</li>
+<li>Reverse polarity protection on the power terminals (not on the batteries)</li>
+</ul>
+
+<h3>
+<a id="functions" class="anchor" href="#functions" aria-hidden="true"><span class="octicon octicon-link"></span></a>Functions</h3>
+
+<p>A smaller-grain look at what's needed to build the high-level features:</p>
+
+<ul>
+<li>
+</ul>
+
+<h3>
 <a id="project-notes" class="anchor" href="#project-notes" aria-hidden="true"><span class="octicon octicon-link"></span></a>Project Notes</h3>
 
 <p>This is a general list of notes of important tips I've learned along the way.</p>
